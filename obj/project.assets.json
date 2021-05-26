@@ -8632,20 +8632,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ajayh\\.nuget\\packages\\": {}
+    "C:\\Users\\user\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\JWTAuthentication.WebApi-master\\JWTAuthentication.WebApi-master\\JWTAuthentication.WebApi\\JWTAuthentication.WebApi.csproj",
+      "projectUniqueName": "D:\\MYCODE\\Webapi\\JWTAuthentication.WebApi.csproj",
       "projectName": "JWTAuthentication.WebApi",
-      "projectPath": "D:\\JWTAuthentication.WebApi-master\\JWTAuthentication.WebApi-master\\JWTAuthentication.WebApi\\JWTAuthentication.WebApi.csproj",
-      "packagesPath": "C:\\Users\\ajayh\\.nuget\\packages\\",
-      "outputPath": "D:\\JWTAuthentication.WebApi-master\\JWTAuthentication.WebApi-master\\JWTAuthentication.WebApi\\obj\\",
+      "projectPath": "D:\\MYCODE\\Webapi\\JWTAuthentication.WebApi.csproj",
+      "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+      "outputPath": "D:\\MYCODE\\Webapi\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
+      ],
       "configFilePaths": [
-        "C:\\Users\\ajayh\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
@@ -8725,7 +8730,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.201\\RuntimeIdentifierGraph.json"
       }
     }
   }

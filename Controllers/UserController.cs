@@ -15,9 +15,11 @@ namespace JWTAuthentication.WebApi.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public UserController(IUserService userService, IHttpContextAccessor httpContextAccessor)
         {
             _userService = userService;
+            _httpContextAccessor = httpContextAccessor;
         }
         [HttpPost("register")]
         //[ApiExplorerSettings(IgnoreApi = true)]
@@ -30,7 +32,8 @@ namespace JWTAuthentication.WebApi.Controllers
         [HttpPost("token")]
         public async Task<IActionResult> GetTokenAsync(TokenRequestModel model)
         {
-            var result = await _userService.GetTokenAsync(model);
+            string header =_httpContextAccessor.HttpContext.Request.Headers["X-Device-info"];
+            var result = await _userService.GetTokenAsync(model, header);
             SetRefreshTokenInCookie(result.RefreshToken);
             return Ok(result);
         }
@@ -43,9 +46,10 @@ namespace JWTAuthentication.WebApi.Controllers
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RevokeTokenRequest model)
         {
+            string header = _httpContextAccessor.HttpContext.Request.Headers["X-Device-info"];
             var refreshToken =  model.Token;
         
-            var response = await _userService.RefreshTokenAsync(refreshToken);
+            var response = await _userService.RefreshTokenAsync(refreshToken, header);
             if (!string.IsNullOrEmpty(response.RefreshToken))
                 SetRefreshTokenInCookie(response.RefreshToken);
             return Ok(response);

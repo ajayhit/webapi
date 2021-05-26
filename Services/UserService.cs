@@ -57,7 +57,7 @@ namespace JWTAuthentication.WebApi.Services
                 return $"Email {user.Email } is already registered.";
             }
         }
-        public async Task<AuthenticationModel> GetTokenAsync(TokenRequestModel model)
+        public async Task<AuthenticationModel> GetTokenAsync(TokenRequestModel model,string deviceid)
         {
             var authenticationModel = new AuthenticationModel();
             var user = await _userManager.FindByEmailAsync(model.Email);
@@ -78,17 +78,20 @@ namespace JWTAuthentication.WebApi.Services
                 authenticationModel.Roles = rolesList.ToList();
 
 
-                if (user.RefreshTokens.Any(a => a.IsActive))
+                if (user.RefreshTokens.Any(a =>  a.Deviceinfo == deviceid && a.IsActive))
                 {
                     var activeRefreshToken = user.RefreshTokens.Where(a => a.IsActive == true).FirstOrDefault();
                     authenticationModel.RefreshToken = activeRefreshToken.Token;
                     authenticationModel.RefreshTokenExpiration = activeRefreshToken.Expires;
+                    authenticationModel.Deviceinfo = deviceid;
+                    
                 }
                 else
                 {
-                    var refreshToken = CreateRefreshToken();
+                    var refreshToken = CreateRefreshToken(deviceid);
                     authenticationModel.RefreshToken = refreshToken.Token;
                     authenticationModel.RefreshTokenExpiration = refreshToken.Expires;
+                    authenticationModel.Deviceinfo = deviceid;
                     user.RefreshTokens.Add(refreshToken);
                     _context.Update(user);
                     _context.SaveChanges();
@@ -101,7 +104,7 @@ namespace JWTAuthentication.WebApi.Services
             return authenticationModel;
         }
 
-        private RefreshToken CreateRefreshToken()
+        private RefreshToken CreateRefreshToken(string deviceid)
         {
             var randomNumber = new byte[32];
             using (var generator = new RNGCryptoServiceProvider())
@@ -111,7 +114,8 @@ namespace JWTAuthentication.WebApi.Services
                 {
                     Token = Convert.ToBase64String(randomNumber),
                     Expires = DateTime.UtcNow.AddDays(7),
-                    Created = DateTime.UtcNow
+                    Created = DateTime.UtcNow,
+                    Deviceinfo = deviceid
                 };
 
             }
@@ -173,10 +177,10 @@ namespace JWTAuthentication.WebApi.Services
 
         }
 
-        public async Task<AuthenticationModel> RefreshTokenAsync(string token)
+        public async Task<AuthenticationModel> RefreshTokenAsync(string token,string deviceid)
         {
             var authenticationModel = new AuthenticationModel();
-            var user = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
+            var user = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token && t.Deviceinfo==deviceid));
             if (user == null)
             {
                 authenticationModel.IsAuthenticated = false;
@@ -184,7 +188,7 @@ namespace JWTAuthentication.WebApi.Services
                 return authenticationModel;
             }
 
-            var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
+            var refreshToken = user.RefreshTokens.Single(x => x.Token == token && x.Deviceinfo == deviceid);
 
             if (!refreshToken.IsActive)
             {
@@ -194,10 +198,10 @@ namespace JWTAuthentication.WebApi.Services
             }
 
             //Revoke Current Refresh Token
-         //   refreshToken.Revoked = DateTime.UtcNow;
+            refreshToken.Revoked = DateTime.UtcNow;
 
             //Generate new Refresh Token and save to Database
-            var newRefreshToken = CreateRefreshToken();
+            var newRefreshToken = CreateRefreshToken(deviceid);
             user.RefreshTokens.Add(newRefreshToken);
             _context.Update(user);
             _context.SaveChanges();
