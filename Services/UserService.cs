@@ -198,11 +198,12 @@ namespace JWTAuthentication.WebApi.Services
             }
 
             //Revoke Current Refresh Token
-            refreshToken.Revoked = DateTime.UtcNow;
+            //refreshToken.Revoked = DateTime.UtcNow;
 
             //Generate new Refresh Token and save to Database
             var newRefreshToken = CreateRefreshToken(deviceid);
-            user.RefreshTokens.Add(newRefreshToken);
+            user.RefreshTokens.SingleOrDefault().Token = newRefreshToken.Token;
+            user.RefreshTokens.SingleOrDefault().Expires = newRefreshToken.Expires;
             _context.Update(user);
             _context.SaveChanges();
 
