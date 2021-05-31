@@ -15,6 +15,7 @@ namespace JWTAuthentication.WebApi.Services
         Task<AuthenticationModel> RefreshTokenAsync(string jwtToken,string deviceid);
 
         bool RevokeToken(string token);
+        bool RevokeTokenAll(string Userid);
         ApplicationUser GetById(string id);
     }
 }

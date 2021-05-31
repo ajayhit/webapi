@@ -176,7 +176,6 @@ namespace JWTAuthentication.WebApi.Services
             return $"Incorrect Credentials for user {user.Email}.";
 
         }
-
         public async Task<AuthenticationModel> RefreshTokenAsync(string token,string deviceid)
         {
             var authenticationModel = new AuthenticationModel();
@@ -202,9 +201,9 @@ namespace JWTAuthentication.WebApi.Services
 
             //Generate new Refresh Token and save to Database
             var newRefreshToken = CreateRefreshToken(deviceid);
-            user.RefreshTokens.SingleOrDefault().Token = newRefreshToken.Token;
-            user.RefreshTokens.SingleOrDefault().Expires = newRefreshToken.Expires;
-            _context.Update(user);
+            refreshToken.Token= newRefreshToken.Token;
+            refreshToken.Expires = newRefreshToken.Expires;
+            _context.Update(refreshToken);
             _context.SaveChanges();
 
             //Generates new jwt
@@ -235,6 +234,31 @@ namespace JWTAuthentication.WebApi.Services
             refreshToken.Revoked = DateTime.UtcNow;
             _context.Update(user);
             _context.SaveChanges();
+
+            return true;
+        }
+        public bool RevokeTokenAll(string token)
+        {
+            var userid = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token)).Id;
+
+            var userchk = _context.Users.Where(u => u.Id==userid).ToList();
+            foreach (var item in userchk[0].RefreshTokens.Where(aa=>aa.Revoked==null))
+            {
+          
+                string token1 = item.Token.ToString();
+                var user = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token1));
+                // return false if no user found with token
+                if (user == null) return false;
+                var refreshToken = user.RefreshTokens.Single(x => x.Token == token1);
+
+                // return false if token is not active
+                if (!refreshToken.IsActive) return false;
+
+                // revoke token and save
+                refreshToken.Revoked = DateTime.UtcNow;
+                _context.Update(user);
+                _context.SaveChanges();
+            }
 
             return true;
         }

@@ -8638,11 +8638,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\MYCODE\\Webapi\\JWTAuthentication.WebApi.csproj",
+      "projectUniqueName": "C:\\Users\\user\\Desktop\\webapi\\JWTAuthentication.WebApi.csproj",
       "projectName": "JWTAuthentication.WebApi",
-      "projectPath": "D:\\MYCODE\\Webapi\\JWTAuthentication.WebApi.csproj",
+      "projectPath": "C:\\Users\\user\\Desktop\\webapi\\JWTAuthentication.WebApi.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "D:\\MYCODE\\Webapi\\obj\\",
+      "outputPath": "C:\\Users\\user\\Desktop\\webapi\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
