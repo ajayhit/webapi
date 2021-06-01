@@ -262,6 +262,112 @@ namespace JWTAuthentication.WebApi.Services
 
             return true;
         }
+        public async Task<string> ChangePasswordAsync(ChangePassword Model)
+        {
+            var userinfo = await _userManager.FindByEmailAsync(Model.Email);
+            if (userinfo == null)
+            {
+                return "No Accounts Registered with .";
+            }
+            else if(await _userManager.CheckPasswordAsync(userinfo, Model.Password))
+            {
+                var result = await _userManager.ChangePasswordAsync(userinfo,Model.Password, Model.NewPassword);
+                if (result.Succeeded)
+                {
+                    var userid = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == Model.Token)).Id;
+
+                    var userchk = _context.Users.Where(u => u.Id == userid).ToList();
+                    foreach (var item in userchk[0].RefreshTokens.Where(aa => aa.Revoked == null))
+                    {
+
+                        string token1 = item.Token.ToString();
+                        var user = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token1));
+                        // return false if no user found with token
+                        if (user == null)
+                        {
+                            return "Token Issue";
+                        }
+                        var refreshToken = user.RefreshTokens.Single(x => x.Token == token1);
+
+                        // return false if token is not active
+                        if (!refreshToken.IsActive)
+                        {
+                            return "Token Issue";
+                        }
+
+                        // revoke token and save
+                        refreshToken.Revoked = DateTime.UtcNow;
+                        _context.Update(user);
+                        _context.SaveChanges();
+                    }
+                    return "DONE";
+                }
+                else
+                {
+                    return "Error .";
+                }
+            }
+            else
+            {
+                return "Old Password Is Not Correct .";
+            }
+        }
+        public async Task<string> ForgotPasswordAsync(Forgotpassword Model)
+        {
+            var userinfo = await _userManager.FindByEmailAsync(Model.Email);
+            if (userinfo == null)
+            {
+                return "No Accounts Registered with .";
+            }
+            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(userinfo, Model.phonenumber);
+            return code;
+        }
+        public async Task<string> VerifyPasscode(Verifycode Model)
+        {
+            var userinfo = await _userManager.FindByEmailAsync(Model.Email);
+            if (userinfo == null)
+            {
+                return "No Accounts Registered with .";
+            }
+            var result = await _userManager.VerifyChangePhoneNumberTokenAsync(userinfo, Model.Code, Model.phonenumber);
+            if (result == true)
+            {
+                var code = await _userManager.GeneratePasswordResetTokenAsync(userinfo);
+                var result1 = await _userManager.ResetPasswordAsync(userinfo, code, "Ajay@7720");
+                var userid = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == Model.Token)).Id;
+
+                var userchk = _context.Users.Where(u => u.Id == userid).ToList();
+                foreach (var item in userchk[0].RefreshTokens.Where(aa => aa.Revoked == null))
+                {
+
+                    string token1 = item.Token.ToString();
+                    var user = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token1));
+                    // return false if no user found with token
+                    if (user == null)
+                    {
+                        return "Token Issue";
+                    }
+                    var refreshToken = user.RefreshTokens.Single(x => x.Token == token1);
+
+                    // return false if token is not active
+                    if (!refreshToken.IsActive)
+                    {
+                        return "Token Issue";
+                    }
+
+                    // revoke token and save
+                    refreshToken.Revoked = DateTime.UtcNow;
+                    _context.Update(user);
+                    _context.SaveChanges();
+                }
+                return "New Password Send .";
+            }
+            else
+            {
+                return "Otp MissMatch .";
+            }
+     
+        }
 
         public ApplicationUser GetById(string id)
         {

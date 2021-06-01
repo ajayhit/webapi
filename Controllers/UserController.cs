@@ -55,8 +55,7 @@ namespace JWTAuthentication.WebApi.Controllers
                 SetRefreshTokenInCookie(response.RefreshToken);
             return Ok(response);
         }
-        
-
+       
         [HttpPost("revoke-token")]
         public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenRequest model)
         {
@@ -90,6 +89,29 @@ namespace JWTAuthentication.WebApi.Controllers
 
             return Ok(new { message = "Token revoked" });
         }
+
+        [HttpPost("ChangePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePassword model)
+        {
+            var response = _userService.ChangePasswordAsync(model);
+
+            return Ok(new { message = response });
+        }
+        [HttpPost("ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword([FromBody] Forgotpassword model)
+        {
+            var response = _userService.ForgotPasswordAsync(model);
+            return Ok(new { message = response });
+        }
+        [HttpPost("VerifyToken")]
+        public async Task<IActionResult> VerifyToken([FromBody] Verifycode model)
+        {
+            var response = _userService.VerifyPasscode(model);
+            return Ok(new { message = response });
+        }
+
+
+
         private void SetRefreshTokenInCookie(string refreshToken)
         {
             var cookieOptions = new CookieOptions

@@ -11,11 +11,12 @@ namespace JWTAuthentication.WebApi.Services
         Task<string> RegisterAsync(RegisterModel model);
         Task<AuthenticationModel> GetTokenAsync(TokenRequestModel model,string deviceid);
         Task<string> AddRoleAsync(AddRoleModel model);
-
         Task<AuthenticationModel> RefreshTokenAsync(string jwtToken,string deviceid);
-
         bool RevokeToken(string token);
         bool RevokeTokenAll(string Userid);
+        Task<string> ChangePasswordAsync(ChangePassword Model);
+        Task<string> ForgotPasswordAsync(Forgotpassword Model);
+        Task<string> VerifyPasscode(Verifycode Model);
         ApplicationUser GetById(string id);
     }
 }
