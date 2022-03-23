@@ -26,6 +26,7 @@ namespace JWTAuthentication.WebApi
 {
     public class Startup
     {
+
         public Startup(IConfiguration configuration)
         {
             _configuration = configuration;

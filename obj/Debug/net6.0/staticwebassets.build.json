@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "ZlbqdxKzKC5k+OR3d8UpVRUhwnCmhM5pLYIleqywNy0=",
+  "Source": "JWTAuthentication.WebApi",
+  "BasePath": "_content/JWTAuthentication.WebApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
