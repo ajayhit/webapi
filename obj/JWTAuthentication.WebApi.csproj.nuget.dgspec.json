@@ -1,23 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\Desktop\\webapi\\JWTAuthentication.WebApi.csproj": {}
+    "C:\\Users\\user\\Desktop\\JWT\\JWTAuthentication.WebApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\Desktop\\webapi\\JWTAuthentication.WebApi.csproj": {
+    "C:\\Users\\user\\Desktop\\JWT\\JWTAuthentication.WebApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\Desktop\\webapi\\JWTAuthentication.WebApi.csproj",
+        "projectUniqueName": "C:\\Users\\user\\Desktop\\JWT\\JWTAuthentication.WebApi.csproj",
         "projectName": "JWTAuthentication.WebApi",
-        "projectPath": "C:\\Users\\user\\Desktop\\webapi\\JWTAuthentication.WebApi.csproj",
+        "projectPath": "C:\\Users\\user\\Desktop\\JWT\\JWTAuthentication.WebApi.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\Desktop\\webapi\\obj\\",
+        "outputPath": "C:\\Users\\user\\Desktop\\JWT\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
           "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
           "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
@@ -91,6 +93,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[3.1.21, 3.1.21]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -99,7 +107,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }

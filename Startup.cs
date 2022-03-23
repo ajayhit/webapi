@@ -40,7 +40,7 @@ namespace JWTAuthentication.WebApi
             services.Configure<JWT>(_configuration.GetSection("JWT"));
            
             //User Manager Service
-            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
             services.AddScoped<IUserService, UserService>();
 
 

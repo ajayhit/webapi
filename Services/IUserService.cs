@@ -8,7 +8,7 @@ namespace JWTAuthentication.WebApi.Services
 {
     public interface IUserService
     {
-        Task<string> RegisterAsync(RegisterModel model);
+        Task<dynamic> RegisterAsync(RegisterModel model);
         Task<AuthenticationModel> GetTokenAsync(TokenRequestModel model,string deviceid);
         Task<string> AddRoleAsync(AddRoleModel model);
         Task<AuthenticationModel> RefreshTokenAsync(string jwtToken,string deviceid);

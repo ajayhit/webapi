@@ -9,11 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace JWTAuthentication.WebApi.Controllers
 {
     [Authorize]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class SecuredController : ControllerBase
     {
-        [HttpGet]
+        [HttpPost("Getdata")]
         public async Task<IActionResult> GetSecuredData()
         {
             return Ok("This Secured Data is available only for Authenticated Users.");

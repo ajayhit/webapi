@@ -22,6 +22,7 @@ namespace JWTAuthentication.WebApi.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly JWT _jwt;
 
@@ -32,30 +33,57 @@ namespace JWTAuthentication.WebApi.Services
             _roleManager = roleManager;
             _jwt = jwt.Value;
         }
-        public async Task<string> RegisterAsync(RegisterModel model)
+        public async Task<dynamic> RegisterAsync(RegisterModel model)
         {
+            var status = false;var message = "";
             var user = new ApplicationUser
             {
                 UserName = model.Username,
                 Email = model.Email,
                 FirstName = model.FirstName,
-                LastName = model.LastName
+                LastName = model.LastName,
+                PhoneNumber=model.PhoneNumber
             };
             var userWithSameEmail = await _userManager.FindByEmailAsync(model.Email);
+
             if (userWithSameEmail == null)
             {
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                bool IsPhoneAlreadyRegistered = _userManager.Users.Any(item => item.PhoneNumber == model.PhoneNumber);
+                if (IsPhoneAlreadyRegistered == false)
                 {
-                    await _userManager.AddToRoleAsync(user, Authorization.default_role.ToString());
-
+                    var result = await _userManager.CreateAsync(user, model.Password);
+                    if (result.Succeeded)
+                    {
+                        await _userManager.AddToRoleAsync(user, Authorization.default_role.ToString());
+                        status = true;
+                        message = $"User Registered with username {user.UserName}";
+                    }
+                    else
+                    {
+                        status = false;
+                        foreach (var error in result.Errors)
+                        {
+                            message = error.Description;
+                        }
+                    }
                 }
-                return $"User Registered with username {user.UserName}";
+                else
+                {
+                    message = $"Mobile {user.PhoneNumber } is already registered.";
+                }
+               // return $"User Registered with username {user.UserName}";
             }
             else
             {
-                return $"Email {user.Email } is already registered.";
+                status = false;
+                message= $"Email {user.Email } is already registered.";
             }
+            var resp = new
+            {
+                Status= status,
+                Message= message
+            };
+            return resp;
         }
         public async Task<AuthenticationModel> GetTokenAsync(TokenRequestModel model,string deviceid)
         {
@@ -314,13 +342,20 @@ namespace JWTAuthentication.WebApi.Services
         }
         public async Task<string> ForgotPasswordAsync(Forgotpassword Model)
         {
-            var userinfo = await _userManager.FindByEmailAsync(Model.Email);
-            if (userinfo == null)
+            try
             {
-                return "No Accounts Registered with .";
+                var userinfo = await _userManager.FindByEmailAsync(Model.Email);
+                if (userinfo == null)
+                {
+                    return "No Accounts Registered with .";
+                }
+                var code = await _userManager.GenerateChangePhoneNumberTokenAsync(userinfo, Model.phonenumber);
+                return code;
             }
-            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(userinfo, Model.phonenumber);
-            return code;
+            catch(Exception ex)
+            {
+                return "";
+            }
         }
         public async Task<string> VerifyPasscode(Verifycode Model)
         {
@@ -334,12 +369,13 @@ namespace JWTAuthentication.WebApi.Services
             {
                 var code = await _userManager.GeneratePasswordResetTokenAsync(userinfo);
                 var result1 = await _userManager.ResetPasswordAsync(userinfo, code, "Ajay@7720");
-                var userid = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == Model.Token)).Id;
+        
+     
+              //  var userid = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == Model.Token)).Id;
 
-                var userchk = _context.Users.Where(u => u.Id == userid).ToList();
+                var userchk = _context.Users.Where(u => u.Id == userinfo.Id).ToList();
                 foreach (var item in userchk[0].RefreshTokens.Where(aa => aa.Revoked == null))
                 {
-
                     string token1 = item.Token.ToString();
                     var user = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token1));
                     // return false if no user found with token
@@ -348,13 +384,11 @@ namespace JWTAuthentication.WebApi.Services
                         return "Token Issue";
                     }
                     var refreshToken = user.RefreshTokens.Single(x => x.Token == token1);
-
                     // return false if token is not active
                     if (!refreshToken.IsActive)
                     {
                         return "Token Issue";
                     }
-
                     // revoke token and save
                     refreshToken.Revoked = DateTime.UtcNow;
                     _context.Update(user);
@@ -365,10 +399,8 @@ namespace JWTAuthentication.WebApi.Services
             else
             {
                 return "Otp MissMatch .";
-            }
-     
+            }     
         }
-
         public ApplicationUser GetById(string id)
         {
             return _context.Users.Find(id);

@@ -114,12 +114,16 @@ namespace JWTAuthentication.WebApi.Controllers
 
         private void SetRefreshTokenInCookie(string refreshToken)
         {
-            var cookieOptions = new CookieOptions
+            try
             {
-                HttpOnly = true,
-                Expires = DateTime.UtcNow.AddDays(10),
-            };
-            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTime.UtcNow.AddDays(10),
+                };
+                Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+            }
+            catch { }
         }
 
         [Authorize]
